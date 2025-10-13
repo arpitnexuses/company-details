@@ -13,16 +13,76 @@ type Props = {
 export function CompanyTable({ data }: Props) {
   const [open, setOpen] = useState(false)
   const [activeSlug, setActiveSlug] = useState<string | null>(null)
+  const [query, setQuery] = useState("")
+  const [filterType, setFilterType] = useState("")
+  const [filterListed, setFilterListed] = useState("")
+  const [filterPermissibility, setFilterPermissibility] = useState("")
 
   const activeCompany = useMemo(() => data.find((c) => c.slug === activeSlug), [data, activeSlug])
+  const filteredData = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    return data.filter((c) => {
+      const matchesQuery = !q || [
+        c.name,
+        c.website,
+        c.companyEmail,
+        c.hq,
+        c.type,
+        c.serviceFocus,
+      ].some((v) => (v || "").toLowerCase().includes(q))
+
+      const matchesType = !filterType || c.type === filterType
+      const matchesListed =
+        !filterListed || (c.listed || "").toLowerCase().includes(filterListed.toLowerCase())
+      const matchesPerm = !filterPermissibility || c.permissibility === filterPermissibility
+
+      return matchesQuery && matchesType && matchesListed && matchesPerm
+    })
+  }, [data, query, filterType, filterListed, filterPermissibility])
   const activeLogo = activeCompany ? companyLogos[activeCompany.slug] : undefined
+
+  const uniqueTypes = useMemo(() => Array.from(new Set(data.map((d) => d.type).filter(Boolean))).sort(), [data])
+  const uniquePerms = useMemo(() => Array.from(new Set(data.map((d) => d.permissibility).filter(Boolean))).sort(), [data])
 
   return (
     <>
+      {/* Filters */}
+      <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex-1">
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by name, website, email, HQ, focus..."
+            className="h-9 w-full rounded-md border border-[#00153D] bg-background px-3 text-sm outline-none focus:ring-2 focus:ring-[#00153D]"
+          />
+        </div>
+        <div className="w-full md:w-auto grid grid-cols-2 sm:grid-cols-2 md:grid-cols-none md:flex md:items-center gap-3">
+          
+          <select
+            value={filterListed}
+            onChange={(e) => setFilterListed(e.target.value)}
+            className="h-9 min-w-[10rem] rounded-md border border-[#00153D] bg-background px-3 text-sm"
+          >
+            <option value="">All Listed</option>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+          </select>
+          <select
+            value={filterPermissibility}
+            onChange={(e) => setFilterPermissibility(e.target.value)}
+            className="h-9 min-w-[10rem] rounded-md border border-[#00153D] bg-background px-3 text-sm"
+          >
+            <option value="">All Priority</option>
+            {uniquePerms.map((p) => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
+        </div>
+      </div>
       {/* Desktop Table View */}
       <div className="hidden md:block overflow-x-auto rounded-lg border border-border">
         <table className="report-table min-w-[900px] w-full text-sm">
-          <thead>
+          <thead className="bg-[#00153D] text-white">
             <tr>
               <th className="px-4 py-3 text-left font-medium">Company</th>
               <th className="px-4 py-3 text-left font-medium">Type</th>
@@ -34,8 +94,8 @@ export function CompanyTable({ data }: Props) {
               <th className="px-4 py-3 text-left font-medium">Permissibility</th>
             </tr>
           </thead>
-          <tbody>
-            {data.map((c) => (
+        <tbody>
+          {filteredData.map((c) => (
               <tr
                 key={c.slug}
                 className="border-t hover:bg-accent/50 transition-colors cursor-pointer"
@@ -82,7 +142,7 @@ export function CompanyTable({ data }: Props) {
 
       {/* Mobile Card View */}
       <div className="md:hidden space-y-3 p-4">
-        {data.map((c) => (
+        {filteredData.map((c) => (
           <div
             key={c.slug}
             className="bg-card border border-border rounded-lg p-4 hover:bg-accent/50 transition-colors cursor-pointer"
