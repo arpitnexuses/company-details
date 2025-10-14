@@ -38,7 +38,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Florin Court Capital"),
     name: "Florin Court Capital",
-    logoLink: "https://florincourt.com/images/main-brand.png",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.25.42%20PM.png",
     website: "florincourt.com",
     companyOverview: "A UK-based systematic asset manager and part of Brummer & Partners, Florin Court Capital specializes in quantitative trading across exotic and alternative markets, including commodities, currencies, and fixed income. The team has deep roots in Man Group/AHL, with strong academic and quant backgrounds.",
     hq: "London, UK",
@@ -66,7 +66,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Gulf Capital"),
     name: "Gulf Capital",
-    logoLink: "https://www.gulfcapital.com/wp-content/uploads/2021/09/GC-Social-Share.jpg",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/guld.png",
     website: "gulfcapital.com",
     companyOverview: "One of the UAE's leading alternative investment firms, Gulf Capital has over 19 years of experience investing in growth markets. It focuses on ESG-aligned, thematic sectors and has completed 37 transactions, including in healthcare (ART Fertility) and fintech (Geidea). Signatory to UNPRI and Terra Carta.",
     hq: "Abu Dhabi, UAE",
@@ -94,7 +94,7 @@ export const companies: Company[] = [
   {
     slug: slugify("J.P. Morgan"),
     name: "J.P. Morgan",
-    logoLink: "https://www.jpmorgan.com/content/dam/logos-global/logo-jpm-brown.svg",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/jpmorgan-vector-logo.png",
     website: "jpmorgan.com",
     companyOverview: "A global financial giant, JPMorgan Chase is the largest bank in the U.S. by assets and a major player in the Middle East. It provides corporate, investment, and private banking services in the UAE, with a strong presence in Dubai International Financial Centre (DIFC). It opened new tech hubs in India in 2025.",
     hq: "New York, USA",
@@ -178,7 +178,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Investcorp"),
     name: "Investcorp",
-    logoLink: "https://seekvectorlogo.com/wp-content/uploads/2022/01/investcorp-vector-logo-2022.png",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%201.41.45%20PM.png",
     website: "investcorp.com",
     companyOverview: "A Bahrain-based global alternative investment firm, Investcorp has $60 billion in AUM and operates across North America, Europe, and the GCC. It has a strong presence in India and the UAE, with a focus on ESG and sustainable investing. It is listed on the Bahrain Bourse.",
     hq: "Bahrain",
@@ -206,7 +206,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Intertrust Group"),
     name: "Intertrust Group",
-    logoLink: "https://cscwebcontentstorage.blob.core.windows.net/cscmarketing-cscglobal-media/includes/centralized_code/logos/csc-logo-marketing-horizontal-color.svg",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%201.35.58%20PM.png",
     website: "intertrustgroup.com",
     companyOverview: "A global leader in corporate and fund services, Intertrust provides governance, compliance, and administrative solutions in over 30 jurisdictions. Acquired by CSC in 2024, it now operates as part of a larger entity with enhanced technology and compliance frameworks.",
     hq: "Amsterdam, Netherlands",
@@ -234,7 +234,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Iliad Partners"),
     name: "Iliad Partners",
-    logoLink: "https://static.wixstatic.com/media/c638bd_00863cc6e9f84ec1ae9889b0c16d9d47~mv2.png/v1/fill/w_502,h_73,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/gscomputer10%20(5).png",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%201.56.34%20PM.png",
     website: "iliad-partners.com",
     companyOverview: "A Dubai-based venture capital firm founded in 2022, Iliad Partners focuses on early-stage technology companies in the Middle East and North Africa. It has strong government and sovereign wealth fund connections and invests in sectors aligned with UAE's digital transformation goals.",
     hq: "Dubai, UAE",
@@ -262,7 +262,7 @@ export const companies: Company[] = [
   {
     slug: slugify("ICE (Intercontinental Exchange)"),
     name: "ICE (Intercontinental Exchange)",
-    logoLink: "https://mms.businesswire.com/media/20240418469332/en/411456/5/ICE_R_colour.jpg",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.08.16%20PM.png",
     website: "ice.com",
     companyOverview: "A leading global financial infrastructure company, ICE owns the New York Stock Exchange and operates commodity and futures exchanges. It provides data, clearing, and technology services, with a strong focus on digital transformation and compliance. Stable operations in 2025.",
     hq: "Atlanta, USA",
@@ -290,7 +290,7 @@ export const companies: Company[] = [
   {
     slug: slugify("I Squared Capital"),
     name: "I Squared Capital",
-    logoLink: "https://mms.businesswire.com/media/20250924425927/en/2588722/22/ISquared_Horiz_RGB_%2820%29.jpg",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.08.28%20PM.png",
     website: "isquaredcapital.com",
     companyOverview: "A global infrastructure investment firm, I Squared Capital focuses on sustainable and digital infrastructure in emerging markets. It has offices in the U.S., UAE, and Asia, with a strong ESG commitment. It is expanding in clean energy and digital infrastructure in 2025.",
     hq: "Miami, USA",
@@ -374,7 +374,7 @@ export const companies: Company[] = [
   {
     slug: slugify("52 Seconds Capital Limited"),
     name: "52 Seconds Capital Limited",
-    logoLink: "https://52scapital.com/wp-content/uploads/2023/05/header_logo.png",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.09.38%20PM.png",
     website: "52scapital.com",
     companyOverview: "ADGM-FSRA regulated independent financial advisory firm offering customized institutional-grade wealth and investment solutions; client-centric approach with focus on long-term health and wealth.",
     hq: "Abu Dhabi, UAE",
@@ -458,7 +458,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Abu Dhabi Reinsurance Company Limited (ADRE)"),
     name: "Abu Dhabi Reinsurance Company Limited (ADRE)",
-    logoLink: "https://cdn.prod.website-files.com/62540f65e7fc4af71b562972/62540fb464b16623a0396658_AD%20Re%20Gazelle%20logo%20transparent.webp",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.10.28%20PM.png",
     website: "adreuae.com",
     companyOverview: "Leading reinsurance firm in the UAE, providing risk solutions for insurers across property, casualty, and specialty lines.",
     hq: "Abu Dhabi, UAE",
@@ -486,7 +486,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Access Bridge Ventures Limited"),
     name: "Access Bridge Ventures Limited",
-    logoLink: "https://images.squarespace-cdn.com/content/v1/5f2a3c91867d21103bee14a0/1597682095430-LQ7Q8XEYOUQ4TPWRM8VR/AccessBridgeLogo_Color_horizontal.png?format=1500w",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.10.50%20PM.png",
     website: "access-bridge.com",
     companyOverview: "Venture capital firm investing in early-stage fintech and digital economy startups in MENA and South Asia.",
     hq: "Dubai, UAE",
@@ -570,7 +570,7 @@ export const companies: Company[] = [
   {
     slug: slugify("AD Investment Management Limited (ADIM)"),
     name: "AD Investment Management Limited (ADIM)",
-    logoLink: "https://www.adim.ae/images/logo.jpg",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.21.43%20PM.png",
     website: "adim.ae",
     companyOverview: "Subsidiary of ADQ, one of UAE's largest holding companies; manages investments across sectors including energy, utilities, and healthcare.",
     hq: "Abu Dhabi, UAE",
@@ -710,7 +710,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Al Ansari Exchange L.L.C."),
     name: "Al Ansari Exchange L.L.C.",
-    logoLink: "https://alansariexchange.com/wp-content/uploads/2019/10/Al-Ansari-Exchange-Logo.png",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.11.35%20PM.png",
     website: "alansariexchange.com",
     companyOverview: "One of the largest exchange houses in the UAE, offering remittance, foreign exchange, bill payment, and digital banking services; trusted for 45+ years with 100+ branches.",
     hq: "Dubai, UAE",
@@ -738,7 +738,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Aliph Capital Limited"),
     name: "Aliph Capital Limited",
-    logoLink: "https://intlbm.com/wp-content/uploads/2022/11/bdy-3-1024x576.png",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.11.53%20PM.png",
     website: "aliph.capital",
     companyOverview: "Abu Dhabi-based alternative investment firm specializing in private equity, venture capital, and special situations in technology and sustainability sectors.",
     hq: "Abu Dhabi, UAE",
@@ -766,7 +766,7 @@ export const companies: Company[] = [
   {
     slug: slugify("Alpen Capital (ME) Limited"),
     name: "Alpen Capital (ME) Limited",
-    logoLink: "https://alpencapital.com/assets/images/logo.svg",
+    logoLink: "https://22527425.fs1.hubspotusercontent-na2.net/hubfs/22527425/CAN/Screenshot%202025-10-14%20at%202.12.57%20PM.png",
     website: "alpencapital.com",
     companyOverview: "Dubai-based investment bank offering research, asset management, and advisory services; known for macroeconomic insights and institutional execution across MENA.",
     hq: "Dubai, UAE",

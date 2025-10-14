@@ -1,14 +1,98 @@
 import type { Company } from "@/data/companies"
+import { useRef, useState } from "react"
+import { pdf } from "@react-pdf/renderer"
+import CompanyPDFDocument from "./company-pdf-document"
 
 type Props = {
   company: Company
   logo?: string
 }
 
-
 export function CompanyReport({ company, logo }: Props) {
+  const reportRef = useRef<HTMLDivElement>(null)
+  const [isExporting, setIsExporting] = useState(false)
+
+  async function toDataUrlFromBlob(blob: Blob): Promise<string> {
+    return await new Promise<string>((resolve) => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.readAsDataURL(blob)
+    })
+  }
+
+  async function rasterizeSvgToPngDataUrl(svgText: string): Promise<string> {
+    const blob = new Blob([svgText], { type: 'image/svg+xml' })
+    const url = URL.createObjectURL(blob)
+    try {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          canvas.width = img.width || 256
+          canvas.height = img.height || 256
+          const ctx = canvas.getContext('2d')!
+          ctx.drawImage(img, 0, 0)
+          resolve(canvas.toDataURL('image/png'))
+        }
+        img.onerror = reject
+        img.src = url
+      })
+      return dataUrl
+    } finally {
+      URL.revokeObjectURL(url)
+    }
+  }
+
+  async function fetchLogoDataUrl(url?: string): Promise<string | undefined> {
+    try {
+      const src = url || company.logoLink
+      if (!src) return undefined
+      const res = await fetch(src, { mode: 'cors' })
+      if (!res.ok) return undefined
+      const contentType = res.headers.get('Content-Type') || ''
+      const blob = await res.blob()
+      if (contentType.includes('svg')) {
+        const text = await blob.text()
+        return await rasterizeSvgToPngDataUrl(text)
+      }
+      return await toDataUrlFromBlob(blob)
+    } catch (_) {
+      return undefined
+    }
+  }
+
+  const exportToPDF = async () => {
+    if (isExporting) return
+
+    setIsExporting(true)
+    try {
+      const logoDataUrl = await fetchLogoDataUrl(logo || company.logoLink)
+      // Generate PDF using React PDF with embedded logo as data URL
+      const blob = await pdf(<CompanyPDFDocument company={company} logoDataUrl={logoDataUrl} />).toBlob()
+      
+      // Create download link
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `${company.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_report.pdf`
+      
+      // Trigger download
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      
+      // Clean up
+      URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error generating PDF:', error)
+    } finally {
+      setIsExporting(false)
+    }
+  }
+
   return (
-    <div className="bg-gradient-to-br from-background via-background to-muted/20 min-h-screen">
+    <div ref={reportRef} className="bg-gradient-to-br from-background via-background to-muted/20 min-h-screen print:bg-white print:min-h-0">
       {/* Report Header */}
       <div className="relative bg-[#00153D] p-4 sm:p-6 lg:p-10 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-[#00153D]/90 to-transparent"></div>
@@ -64,27 +148,53 @@ export function CompanyReport({ company, logo }: Props) {
               </span>
             </div>
           </div>
+          
+          {/* Export PDF Button */}
+          <div className="flex-shrink-0">
+            <button
+              onClick={exportToPDF}
+              disabled={isExporting}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-white text-[#00153D] rounded-lg hover:bg-gray-100 transition-colors duration-200 font-semibold text-sm shadow-lg hover:shadow-xl disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isExporting ? (
+                <>
+                  <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                  </svg>
+                  Export PDF
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Report Content */}
-      <div className="p-4 sm:p-6 lg:p-10 space-y-6 sm:space-y-8 lg:space-y-10">
+      <div className="p-4 sm:p-6 lg:p-10 space-y-4 sm:space-y-6 lg:space-y-8 print:p-4 print:space-y-3">
         {/* Executive Summary */}
-        <div className="bg-gradient-to-br from-card via-card to-muted/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-border/50 backdrop-blur-sm">
-          <div className="flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6">
+        <div className="bg-gradient-to-br from-card via-card to-muted/30 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-border/50 backdrop-blur-sm print:p-4 print:shadow-none">
+          <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-4 print:mb-2">
             <div className="w-1.5 sm:w-2 h-6 sm:h-8 lg:h-10 bg-[#00153D] rounded-full"></div>
-            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-card-foreground">Executive Summary</h2>
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-card-foreground print:text-lg">Executive Summary</h2>
             <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"></div>
           </div>
-          <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none">
-            <p className="text-card-foreground leading-relaxed text-sm sm:text-base lg:text-lg font-medium">{company.companyOverview}</p>
+          <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none print:prose-sm">
+            <p className="text-card-foreground leading-relaxed text-sm sm:text-base lg:text-lg font-medium print:text-sm print:leading-snug">{company.companyOverview}</p>
           </div>
         </div>
 
         {/* Company Information Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 print:gap-3">
           {/* Basic Information */}
-          <div className="bg-gradient-to-br from-card via-card to-card/80 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-border/50 backdrop-blur-sm">
+          <div className="bg-gradient-to-br from-card via-card to-card/80 rounded-xl sm:rounded-2xl p-4 sm:p-6 lg:p-8 shadow-lg border border-border/50 backdrop-blur-sm print:p-4 print:shadow-none">
             <div className="flex items-center gap-2 sm:gap-3 mb-4 sm:mb-6">
                 <div className="w-1.5 sm:w-2 h-6 sm:h-8 bg-[#00153D] rounded-full"></div>
                 <h3 className="text-lg sm:text-xl lg:text-2xl font-bold text-card-foreground">Company Information</h3>
@@ -196,13 +306,13 @@ export function CompanyReport({ company, logo }: Props) {
         </div>
 
         {/* Decision Makers */}
-        <div className="bg-card border border-border rounded-lg p-6 shadow-sm">
-          <h3 className="text-2xl font-bold text-card-foreground mb-6 flex items-center gap-3">
+        <div className="bg-card border border-border rounded-lg p-6 shadow-sm print:p-4 print:shadow-none">
+          <h3 className="text-2xl font-bold text-card-foreground mb-6 flex items-center gap-3 print:text-lg print:mb-3">
             <div className="w-2 h-8 bg-[#00153D] rounded"></div>
             Key Decision Makers
           </h3>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 print:gap-2">
             {[
               { 
                 role: "Primary Contact", 
@@ -226,7 +336,7 @@ export function CompanyReport({ company, logo }: Props) {
                 icon: "3"
               },
             ].map((contact, index) => (
-              <div key={index} className="border border-border rounded-lg p-4 bg-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
+              <div key={index} className="border border-border rounded-lg p-4 bg-card hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col print:p-3 print:shadow-none print:hover:translate-y-0">
                 {/* Header */}
                 <div className="flex items-center gap-3 mb-4">
                   <div className="w-10 h-10 bg-[#00153D] rounded-full flex items-center justify-center text-primary-foreground font-bold text-lg">
@@ -267,51 +377,51 @@ export function CompanyReport({ company, logo }: Props) {
         </div>
 
         {/* Pitch Opportunities */}
-        <div className="bg-gradient-to-br from-[#00153D]/5 via-[#00153D]/3 to-accent/5 border border-[#00153D]/20 rounded-xl p-8 shadow-sm">
-          <div className="flex items-center gap-3 mb-6">
+        <div className="bg-gradient-to-br from-[#00153D]/5 via-[#00153D]/3 to-accent/5 border border-[#00153D]/20 rounded-xl p-8 shadow-sm print:p-4 print:shadow-none">
+          <div className="flex items-center gap-3 mb-6 print:mb-3">
             <div className="w-2 h-8 bg-[#00153D] rounded-full"></div>
-            <h3 className="text-2xl font-bold text-card-foreground">Continental Pitch Opportunities</h3>
+            <h3 className="text-2xl font-bold text-card-foreground print:text-lg">Continental Pitch Opportunities</h3>
             <div className="flex-1 h-px bg-gradient-to-r from-primary/20 to-transparent"></div>
           </div>
-          <div className="bg-card/50 backdrop-blur-sm rounded-xl p-6 border border-primary/10 shadow-inner">
-            <div className="prose prose-sm max-w-none">
-              <p className="text-card-foreground leading-relaxed text-base whitespace-pre-line font-medium">{company.notes}</p>
+          <div className="bg-card/50 backdrop-blur-sm rounded-xl p-6 border border-primary/10 shadow-inner print:p-4 print:shadow-none">
+            <div className="prose prose-sm max-w-none print:prose-xs">
+              <p className="text-card-foreground leading-relaxed text-base whitespace-pre-line font-medium print:text-sm print:leading-snug">{company.notes}</p>
             </div>
           </div>
         </div>
 
         {/* Additional Information */}
         {company.additionalNotes && (
-          <div className="bg-gradient-to-br from-card via-card to-card/80 rounded-2xl p-8 shadow-lg border border-border/50 backdrop-blur-sm">
-            <div className="flex items-center gap-4 mb-6">
+          <div className="bg-gradient-to-br from-card via-card to-card/80 rounded-2xl p-8 shadow-lg border border-border/50 backdrop-blur-sm print:p-4 print:shadow-none">
+            <div className="flex items-center gap-4 mb-6 print:mb-3">
               <div className="w-2 h-10 bg-[#00153D] rounded-full"></div>
-              <h3 className="text-3xl font-bold text-card-foreground">Additional Insights</h3>
+              <h3 className="text-3xl font-bold text-card-foreground print:text-lg">Additional Insights</h3>
               <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"></div>
             </div>
-            <div className="prose prose-base max-w-none">
-              <p className="text-card-foreground leading-relaxed font-medium">{company.additionalNotes}</p>
+            <div className="prose prose-base max-w-none print:prose-sm">
+              <p className="text-card-foreground leading-relaxed font-medium print:text-sm print:leading-snug">{company.additionalNotes}</p>
             </div>
           </div>
         )}
 
         {/* Latest News */}
-        <div className="bg-gradient-to-br from-card via-card to-card/80 rounded-2xl p-8 shadow-lg border border-border/50 backdrop-blur-sm">
-          <div className="flex items-center gap-4 mb-6">
+        <div className="bg-gradient-to-br from-card via-card to-card/80 rounded-2xl p-8 shadow-lg border border-border/50 backdrop-blur-sm print:p-4 print:shadow-none">
+          <div className="flex items-center gap-4 mb-6 print:mb-3">
             <div className="w-2 h-10 bg-[#00153D] rounded-full"></div>
-            <h3 className="text-3xl font-bold text-card-foreground">Latest News & Updates</h3>
+            <h3 className="text-3xl font-bold text-card-foreground print:text-lg">Latest News & Updates</h3>
             <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent"></div>
           </div>
-          <div className="bg-gradient-to-br from-[#00153D]/5 via-[#00153D]/3 to-accent/5 rounded-xl p-6 border border-[#00153D]/20 shadow-inner">
-            <div className="prose prose-base max-w-none">
-              <p className="text-card-foreground mb-4 font-medium leading-relaxed">{company.latestNews}</p>
+          <div className="bg-gradient-to-br from-[#00153D]/5 via-[#00153D]/3 to-accent/5 rounded-xl p-6 border border-[#00153D]/20 shadow-inner print:p-4 print:shadow-none">
+            <div className="prose prose-base max-w-none print:prose-sm">
+              <p className="text-card-foreground mb-4 font-medium leading-relaxed print:text-sm print:leading-snug print:mb-2">{company.latestNews}</p>
               {company.latestNewsLink && (
                 <a 
                   href={company.latestNewsLink} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-[#00153D] hover:text-[#00153D]/80 font-semibold transition-colors group"
+                  className="inline-flex items-center gap-2 text-[#00153D] hover:text-[#00153D]/80 font-semibold transition-colors group print:text-xs"
                 >
-                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 group-hover:scale-110 transition-transform duration-200 print:w-4 print:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                   </svg>
                   View Source
@@ -322,8 +432,8 @@ export function CompanyReport({ company, logo }: Props) {
         </div>
 
         {/* Report Footer */}
-        <div className="bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 rounded-2xl p-6 text-center border border-border/30">
-          <div className="flex items-center justify-center gap-2 text-muted-foreground">
+        <div className="bg-gradient-to-r from-muted/50 via-muted/30 to-muted/50 rounded-2xl p-6 text-center border border-border/30 print:p-3 print:shadow-none">
+          <div className="flex items-center justify-center gap-2 text-muted-foreground print:text-xs">
             <div className="w-2 h-2 bg-[#00153D] rounded-full"></div>
             <p className="font-medium">Report generated on {new Date().toLocaleDateString()} | Continental Financial Services</p>
             <div className="w-2 h-2 bg-[#00153D] rounded-full"></div>
