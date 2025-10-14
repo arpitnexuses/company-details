@@ -1,3 +1,5 @@
+'use client'
+
 import type { Company } from "@/data/companies"
 import { useRef, useState } from "react"
 import { pdf } from "@react-pdf/renderer"
